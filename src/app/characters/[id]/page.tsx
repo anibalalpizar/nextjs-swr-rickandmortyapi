@@ -3,19 +3,15 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
-import useSWR from "swr"
 import { Spinner } from "react-bootstrap"
-import * as RickMortyApi from "@/network/rickAndMorty.api"
+import useRickMorty from "@/hooks/useRickMorty"
 
 function Page() {
   const params = useParams()
 
-  const characterId = params.id?.toString() || ""
+  const characterId = parseInt(params.id as string)
 
-  const { data: character, isLoading } = useSWR(
-    characterId,
-    RickMortyApi.getCharacterById
-  )
+  const { data: character, isLoading } = useRickMorty(characterId)
 
   return (
     <div className="d-flex flex-column align-items-center">
@@ -25,6 +21,7 @@ function Page() {
         </Link>
       </p>
       {isLoading && <Spinner animation="grow" />}
+      {character === null && <p>Character not found</p>}
       {character && (
         <>
           <h1 className="text-center text-capitalize">{character.name}</h1>
@@ -37,7 +34,6 @@ function Page() {
           <div className="d-inline-block mt-2">
             <p>Species: {character.species}</p>
             <p>Status: {character.status}</p>
-            
           </div>
         </>
       )}
