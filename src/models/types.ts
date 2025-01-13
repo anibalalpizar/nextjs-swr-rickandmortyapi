@@ -7,7 +7,13 @@ export interface RickAndMorty {
 }
 
 export interface RickAndMortyPage {
-  results: { name: string }[]
+  results: { id: number }[]
   next: string | null
   previous: string | null
+  info: {
+    count: number
+    pages: number
+    next: string | null
+    prev: string | null
+  }
 }
