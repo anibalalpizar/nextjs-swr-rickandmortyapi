@@ -1,7 +1,6 @@
 import axios from "./axiosInstance"
 import type { RickAndMorty, RickAndMortyPage } from "@/models/types"
 
-
 export async function getCharacterById(id: number) {
   const response = await axios.get<RickAndMorty>(`/character/${id}`)
   console.log(response.data)
@@ -13,3 +12,6 @@ export async function getCharactersPage(page: number) {
   return response.data
 }
 
+export async function setCharacterName(character: RickAndMorty, name: string) {
+  return { ...character, name: name }
+}
