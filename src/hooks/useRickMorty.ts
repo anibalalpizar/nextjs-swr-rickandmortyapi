@@ -3,7 +3,7 @@ import { AxiosError } from "axios"
 import * as RickMortyApi from "@/network/rickAndMorty.api"
 
 export default function useRickMorty(id: number) {
-  const { data, isLoading } = useSWR(id.toString(), async () => {
+  const { data, isLoading, mutate } = useSWR(id.toString(), async () => {
     try {
       return await RickMortyApi.getCharacterById(id)
     } catch (error) {
@@ -14,5 +14,5 @@ export default function useRickMorty(id: number) {
       }
     }
   })
-  return { data, isLoading }
+  return { data, isLoading, mutate }
 }
