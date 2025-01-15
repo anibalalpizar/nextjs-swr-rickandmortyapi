@@ -3,15 +3,35 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useParams } from "next/navigation"
-import { Spinner } from "react-bootstrap"
+import { type FormEvent } from "react"
+import { Button, Form, Spinner } from "react-bootstrap"
 import useRickMorty from "@/hooks/useRickMorty"
+import * as RickMortyApi from "@/network/rickAndMorty.api"
 
 function Page() {
   const params = useParams()
 
   const characterId = parseInt(params.id as string)
 
-  const { data: character, isLoading } = useRickMorty(characterId)
+  const { data: character, isLoading, mutate } = useRickMorty(characterId)
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    const formData = new FormData(event.target as HTMLFormElement)
+    const name = formData.get("name")?.toString().trim()
+
+    if (!name || !character) {
+      return
+    }
+
+    const updatedCharacter = await RickMortyApi.setCharacterName(
+      character,
+      name
+    )
+
+    mutate(updatedCharacter, { revalidate: false })
+  }
 
   return (
     <div className="d-flex flex-column align-items-center">
@@ -35,6 +55,17 @@ function Page() {
             <p>Species: {character.species}</p>
             <p>Status: {character.status}</p>
           </div>
+          <Form onSubmit={handleSubmit} className="mt-4">
+            <Form.Group controlId="character-name-input" className="mb-3">
+              <Form.Label>
+                <strong>Change character name</strong>
+              </Form.Label>
+              <Form.Control name="name" placeholder="E.g. Morty"></Form.Control>
+            </Form.Group>
+            <Button type="submit" variant="primary">
+              Save name
+            </Button>
+          </Form>
         </>
       )}
     </div>
